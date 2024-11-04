@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 import pandas as pd
+import ast
 
 app = FastAPI()
 
@@ -108,9 +109,14 @@ def get_actor(nombre_actor):
 
 @app.get("/get_director/{nombre_director}")
 def get_director(nombre_director):
-    # Convertir la columna 'crew' de string a lista, manejando listas vacías y posibles errores
-    df_peliculas['crew'] = df_peliculas['crew'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) and x else [])
+    # Convertir la columna 'crew' de string a lista de nombres
+    df_peliculas['crew'] = df_peliculas['crew'].apply(
+        lambda x: ast.literal_eval(x) if isinstance(x, str) and x.startswith('[') else []
+    )
     
+    # Verificar si la conversión a listas fue exitosa
+    print(df_peliculas['crew'].head())  # Debug: ver las primeras filas de 'crew' para asegurarse que son listas
+
     # Filtrar las películas dirigidas por el director
     director_movies = df_peliculas[df_peliculas['crew'].apply(lambda x: nombre_director in x)]
 

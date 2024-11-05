@@ -148,7 +148,7 @@ def get_director(nombre_director):
         "detalles_peliculas": movies_info
     }
 
-
+"""
 # Cargar el DataFrame para el modelo de recomendaciones
 df_model = pd.read_parquet("peliculas_para_el_modelo2.parquet")
 
@@ -207,4 +207,4 @@ def get_recommendations(title: str, top_n: int = 5):
     # Obtener los títulos recomendados
     recommended_titles = df_model.iloc[sim_indices]['title'].tolist()
     
-    return {"recomendaciones": recommended_titles}
+    return {"recomendaciones": recommended_titles}"""

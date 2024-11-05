@@ -160,11 +160,11 @@ df_model = pd.read_parquet("peliculas_para_el_modelo2.parquet")
 df_model = df_model.dropna(subset=['overview', 'genres'])
 
 # Vectorización de `overview` usando TF-IDF
-tfidf = TfidfVectorizer(stop_words='english', max_features=10000)  # Limitar características
+tfidf = TfidfVectorizer(stop_words='english', max_features=500)  # Limitar características
 tfidf_matrix = tfidf.fit_transform(df_model['overview'])
 
 # Reducción de dimensionalidad en la matriz TF-IDF
-svd = TruncatedSVD(n_components=100)  # Ajusta según sea necesario
+svd = TruncatedSVD(n_components=30)  # Ajusta según sea necesario
 tfidf_reduced = svd.fit_transform(tfidf_matrix)
 
 # Vectorización de `genres` usando MultiLabelBinarizer

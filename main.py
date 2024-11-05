@@ -111,44 +111,38 @@ def get_actor(nombre_actor):
     return
 
 
-@app.get("/get_director/{nombre_director}")
-def get_director(nombre_director):
-    # Convertir la columna 'crew' de string a lista de nombres
-    df_peliculas['crew'] = df_peliculas['crew'].apply(
-        lambda x: ast.literal_eval(x) if isinstance(x, str) and x.startswith('[') else []
-    )
-    
-    # Verificar si la conversión a listas fue exitosa
-    print(df_peliculas['crew'].head())  # Debug: ver las primeras filas de 'crew' para asegurarse que son listas
 
-    # Filtrar las películas dirigidas por el director
-    director_movies = df_peliculas[df_peliculas['crew'].apply(lambda x: nombre_director.strip() in [director.strip() for director in x])]
+@app.get("/get_director/{nombre_director}")
+def get_director(nombre_director: str):
+    # Filtrar las películas en las que aparece el director en la lista de 'crew'
+    director_movies = df_peliculas[df_peliculas['crew'].apply(
+        lambda crew_list: nombre_director.strip().lower() in [director.strip().lower() for director in crew_list]
+    )]
 
     # Verificar si hay películas del director
     if director_movies.empty:
-        return {"mensaje": f"El director {nombre_director} no ha dirigido ninguna película."}
+        return {"mensaje": f"El director {nombre_director} no ha dirigido ninguna película en la base de datos."}
 
-    # Calcular el retorno total
+    # Calcular el retorno total para el director
     total_return = director_movies['return'].sum()
 
-    # Preparar la salida de las películas
-    movies_info = []
-    for _, row in director_movies.iterrows():
-        movie_info = {
+    # Preparar la lista de detalles de cada película
+    movies_info = [
+        {
             "titulo": row['title'],
             "fecha_lanzamiento": row['release_date'],
             "retorno": row['return'],
-            "costo": row['budget'],
-            "ganancia": row['return'] - row['budget']
+            "costo": float(row['budget']) if isinstance(row['budget'], (int, float, str)) and row['budget'] else 0.0,
+            "ganancia": row['return'] - float(row['budget']) if isinstance(row['budget'], (int, float, str)) and row['budget'] else row['return']
         }
-        movies_info.append(movie_info)
+        for _, row in director_movies.iterrows()
+    ]
 
     # Formar la respuesta final
     return {
         "mensaje": f"El director {nombre_director} ha conseguido un retorno total de {total_return:.6f}.",
         "detalles_peliculas": movies_info
     }
-
 
 
 

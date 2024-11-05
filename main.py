@@ -1,15 +1,17 @@
 from fastapi import FastAPI
 import pandas as pd
 import ast
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import MultiLabelBinarizer, MinMaxScaler
+from scipy.sparse import hstack, csr_matrix
+from sklearn.decomposition import TruncatedSVD
+from sklearn.metrics.pairwise import cosine_similarity
 
 app = FastAPI()
 
-@app.get("/")
-def index():
-    return {"mensaje":"Hola, Jose"}
-
-df = pd.read_csv("df_final.csv")
-df_peliculas = pd.read_csv("peliculas.csv")
+# Cargar los datos
+df = pd.read_csv("df_final.csv", low_memory=False)
+df_peliculas = pd.read_csv("peliculas.csv", low_memory=False)
 
 @app.get("/cantidad_filmaciones_mes/{mes_str}")
 def cantidad_filmaciones_mes(mes_str):
@@ -146,3 +148,67 @@ def get_director(nombre_director):
     }
 
 
+# Cargar el DataFrame para el modelo de recomendaciones
+df_model = pd.read_csv("peliculas_para_el_modelo2.csv", low_memory=False)
+
+# Limpiar el DataFrame del modelo: eliminar filas con NaN en 'overview' y 'genres'
+df_model = df_model.dropna(subset=['overview', 'genres'])
+
+# Vectorización de `overview` usando TF-IDF
+tfidf = TfidfVectorizer(stop_words='english', max_features=10000)  # Limitar características
+tfidf_matrix = tfidf.fit_transform(df_model['overview'])
+
+# Reducción de dimensionalidad en la matriz TF-IDF
+svd = TruncatedSVD(n_components=100)  # Ajusta según sea necesario
+tfidf_reduced = svd.fit_transform(tfidf_matrix)
+
+# Vectorización de `genres` usando MultiLabelBinarizer
+mlb = MultiLabelBinarizer()
+genres_matrix = mlb.fit_transform(df_model['genres'].str.split(', '))
+
+# Normalización de `vote_average` y `release_year`
+scaler = MinMaxScaler()
+scaled_features = scaler.fit_transform(df_model[['vote_average', 'release_year']].astype('float32'))
+
+# Convertir `scaled_features` a una matriz dispersa
+scaled_features_sparse = csr_matrix(scaled_features)
+
+# Verificar dimensiones de las matrices
+print("TF-IDF shape:", tfidf_reduced.shape)
+print("Genres matrix shape:", genres_matrix.shape)
+print("Scaled features shape:", scaled_features_sparse.shape)
+
+# Concatenar todas las características en una matriz final
+feature_matrix = hstack([tfidf_reduced, genres_matrix, scaled_features_sparse])
+
+# Calcular la similitud del coseno
+cosine_sim = cosine_similarity(feature_matrix)
+
+@app.get("/get_recomendaciones/{title}")
+def get_recommendations(title: str, top_n: int = 5):
+    # Busca el índice de la película en el DataFrame
+    idx = df_model[df_model['title'].str.lower() == title.lower()].index
+    
+    # Manejo de caso donde la película no existe
+    if idx.empty:
+        return {"error": f"No se encontró la película '{title}' en la base de datos."}
+    
+    idx = idx[0]  # Toma el primer índice encontrado
+
+    # Aquí no es necesario usar toarray(), ya que cosine_sim es un ndarray
+    sim_scores = list(enumerate(cosine_sim[idx].flatten()))
+
+    # Ordenar las puntuaciones
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+
+    # Obtener los índices de las películas recomendadas
+    sim_indices = [i[0] for i in sim_scores[1:top_n + 1]]
+
+    # Verificar si hay títulos recomendados
+    if not sim_indices:
+        return {"error": "No hay recomendaciones disponibles."}
+    
+    # Obtener los títulos recomendados
+    recommended_titles = df_model.iloc[sim_indices]['title'].tolist()
+    
+    return {"recomendaciones": recommended_titles}

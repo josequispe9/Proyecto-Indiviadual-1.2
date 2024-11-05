@@ -155,7 +155,7 @@ df_model = pd.read_csv("peliculas_para_el_modelo2.csv", low_memory=False)
 df_model = df_model.dropna(subset=['overview', 'genres'])
 
 # Vectorización de `overview` usando TF-IDF
-tfidf = TfidfVectorizer(stop_words='english', max_features=10000)  # Limitar características
+tfidf = TfidfVectorizer(stop_words='english', max_features=5000)  # Limitar características
 tfidf_matrix = tfidf.fit_transform(df_model['overview'])
 
 # Reducción de dimensionalidad en la matriz TF-IDF

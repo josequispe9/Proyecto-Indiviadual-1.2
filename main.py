@@ -151,57 +151,8 @@ def get_director(nombre_director):
 
 
 
-df_model = pd.read_parquet("peliculas_para_el_modelo2.parquet")
 
-# Limpiar el DataFrame
-df_model = df_model.dropna(subset=['overview', 'genres'])
-df_model['vote_average'] = df_model['vote_average'].astype('float32')
-df_model['release_year'] = df_model['release_year'].astype('int32')
 
-# Vectorización de `overview`
-tfidf = TfidfVectorizer(stop_words='english', max_features=2000)
-tfidf_matrix = tfidf.fit_transform(df_model['overview'])
-
-# Reducción de dimensionalidad
-svd = TruncatedSVD(n_components=30)  # Prueba con menos componentes
-tfidf_reduced = svd.fit_transform(tfidf_matrix)
-
-# Vectorización de `genres`
-mlb = MultiLabelBinarizer()
-genres_matrix = mlb.fit_transform(df_model['genres'].str.split(', '))
-
-# Normalización
-scaler = MinMaxScaler()
-scaled_features = scaler.fit_transform(df_model[['vote_average', 'release_year']].astype('float32'))
-scaled_features_sparse = csr_matrix(scaled_features)
-
-# Concatenar características
-feature_matrix = hstack([tfidf_reduced, genres_matrix, scaled_features_sparse])
-
-# Similitud del coseno
-cosine_sim = cosine_similarity(feature_matrix)
-
-@app.get("/get_recomendaciones/{title}")
-def get_recommendations(title: str, top_n: int = 5):
-    idx = df_model[df_model['title'].str.lower() == title.lower()].index
-    
-    if idx.empty:
-        return {"error": f"No se encontró la película '{title}'."}
-    
-    idx = idx[0]
-    sim_scores = list(enumerate(cosine_sim[idx].flatten()))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    
-    sim_indices = [i[0] for i in sim_scores[1:top_n + 1]]
-    
-    if not sim_indices:
-        return {"error": "No hay recomendaciones disponibles."}
-    
-    recommended_titles = df_model.iloc[sim_indices]['title'].tolist()
-    
-    return {"recomendaciones": recommended_titles}
-
-"""
 # Cargar el DataFrame para el modelo de recomendaciones
 df_model = pd.read_parquet("peliculas_para_el_modelo2.parquet")
 
@@ -209,11 +160,11 @@ df_model = pd.read_parquet("peliculas_para_el_modelo2.parquet")
 df_model = df_model.dropna(subset=['overview', 'genres'])
 
 # Vectorización de `overview` usando TF-IDF
-tfidf = TfidfVectorizer(stop_words='english', max_features=2000)  # Limitar características
+tfidf = TfidfVectorizer(stop_words='english', max_features=10000)  # Limitar características
 tfidf_matrix = tfidf.fit_transform(df_model['overview'])
 
 # Reducción de dimensionalidad en la matriz TF-IDF
-svd = TruncatedSVD(n_components=50)  # Ajusta según sea necesario
+svd = TruncatedSVD(n_components=100)  # Ajusta según sea necesario
 tfidf_reduced = svd.fit_transform(tfidf_matrix)
 
 # Vectorización de `genres` usando MultiLabelBinarizer
@@ -226,6 +177,11 @@ scaled_features = scaler.fit_transform(df_model[['vote_average', 'release_year']
 
 # Convertir `scaled_features` a una matriz dispersa
 scaled_features_sparse = csr_matrix(scaled_features)
+
+# Verificar dimensiones de las matrices
+print("TF-IDF shape:", tfidf_reduced.shape)
+print("Genres matrix shape:", genres_matrix.shape)
+print("Scaled features shape:", scaled_features_sparse.shape)
 
 # Concatenar todas las características en una matriz final
 feature_matrix = hstack([tfidf_reduced, genres_matrix, scaled_features_sparse])
@@ -260,4 +216,4 @@ def get_recommendations(title: str, top_n: int = 5):
     # Obtener los títulos recomendados
     recommended_titles = df_model.iloc[sim_indices]['title'].tolist()
     
-    return {"recomendaciones": recommended_titles}"""
+    return {"recomendaciones": recommended_titles}

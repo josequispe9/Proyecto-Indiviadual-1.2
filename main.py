@@ -155,11 +155,11 @@ df_model = pd.read_csv("peliculas_para_el_modelo2.csv", low_memory=False)
 df_model = df_model.dropna(subset=['overview', 'genres'])
 
 # Vectorización de `overview` usando TF-IDF
-tfidf = TfidfVectorizer(stop_words='english', max_features=5000)  # Limitar características
+tfidf = TfidfVectorizer(stop_words='english', max_features=2000)  # Limitar características
 tfidf_matrix = tfidf.fit_transform(df_model['overview'])
 
 # Reducción de dimensionalidad en la matriz TF-IDF
-svd = TruncatedSVD(n_components=100)  # Ajusta según sea necesario
+svd = TruncatedSVD(n_components=50)  # Ajusta según sea necesario
 tfidf_reduced = svd.fit_transform(tfidf_matrix)
 
 # Vectorización de `genres` usando MultiLabelBinarizer
@@ -172,11 +172,6 @@ scaled_features = scaler.fit_transform(df_model[['vote_average', 'release_year']
 
 # Convertir `scaled_features` a una matriz dispersa
 scaled_features_sparse = csr_matrix(scaled_features)
-
-# Verificar dimensiones de las matrices
-print("TF-IDF shape:", tfidf_reduced.shape)
-print("Genres matrix shape:", genres_matrix.shape)
-print("Scaled features shape:", scaled_features_sparse.shape)
 
 # Concatenar todas las características en una matriz final
 feature_matrix = hstack([tfidf_reduced, genres_matrix, scaled_features_sparse])

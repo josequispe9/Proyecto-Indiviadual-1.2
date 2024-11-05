@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 import pandas as pd
+import pyarrow
 import ast
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import MultiLabelBinarizer, MinMaxScaler
@@ -10,8 +11,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 app = FastAPI()
 
 # Cargar los datos
-df = pd.read_csv("df_final.csv", low_memory=False)
-df_peliculas = pd.read_csv("peliculas.csv", low_memory=False)
+df = pd.read_parquet("df_final.parquet")
+df_peliculas = pd.read_parquet("peliculas.parquet")
 
 @app.get("/cantidad_filmaciones_mes/{mes_str}")
 def cantidad_filmaciones_mes(mes_str):
@@ -149,7 +150,7 @@ def get_director(nombre_director):
 
 
 # Cargar el DataFrame para el modelo de recomendaciones
-df_model = pd.read_csv("peliculas_para_el_modelo2.csv", low_memory=False)
+df_model = pd.read_parquet("peliculas_para_el_modelo2.parquet")
 
 # Limpiar el DataFrame del modelo: eliminar filas con NaN en 'overview' y 'genres'
 df_model = df_model.dropna(subset=['overview', 'genres'])

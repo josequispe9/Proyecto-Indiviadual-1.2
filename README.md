@@ -2,7 +2,7 @@
 
 ![Licencia](https://img.shields.io/badge/licencia-MIT-blue.svg) <!-- Cambia la licencia si es necesario -->
 
-Este proyecto es un sistema de recomendación de películas que utiliza técnicas de **similitud del coseno** y **procesamiento de lenguaje natural (NLP)** para analizar similitudes entre películas basadas en características como género, actores y descripciones textuales. El sistema está diseñado para ser eficiente y escalable, y se implementa como una **API RESTful** utilizando **Flask**, desplegada en **Render** para garantizar disponibilidad y escalabilidad.
+Este proyecto es un sistema de recomendación de películas que utiliza técnicas de **similitud del coseno**  para analizar similitudes entre películas basadas en características como género, actores y descripciones textuales. El sistema está diseñado para ser eficiente y escalable, y se implementa como una **API RESTful** utilizando **Flask**, desplegada en **Render** para garantizar disponibilidad y escalabilidad.
 
 ## Tabla de Contenidos
 
@@ -17,7 +17,7 @@ Este proyecto es un sistema de recomendación de películas que utiliza técnica
 
 ## Objetivo
 
-El objetivo de este proyecto es desarrollar un sistema de recomendación eficiente basado en análisis de similitud de contenido para plataformas de streaming. El sistema utiliza técnicas de NLP y similitud del coseno para proporcionar recomendaciones personalizadas y relevantes a los usuarios.
+El objetivo de este proyecto es desarrollar un sistema de recomendación eficiente basado en análisis de similitud de contenido para plataformas de streaming. El sistema utiliza similitud del coseno para proporcionar recomendaciones personalizadas y relevantes a los usuarios.
 
 ## Tecnologías Utilizadas
 
@@ -25,7 +25,6 @@ El objetivo de este proyecto es desarrollar un sistema de recomendación eficien
 - **Flask**: Framework para crear la API RESTful.
 - **Pandas y NumPy**: Para el procesamiento y limpieza de datos.
 - **Scikit-learn**: Para calcular la similitud del coseno.
-- **NLP**: Procesamiento de lenguaje natural para analizar descripciones textuales.
 - **Render**: Plataforma de despliegue en la nube.
 
 ## Proceso de Desarrollo
@@ -35,7 +34,6 @@ El objetivo de este proyecto es desarrollar un sistema de recomendación eficien
    - Normalización de texto para mejorar la calidad del entrenamiento del modelo.
 
 2. **Modelo de Recomendación**:
-   - Uso de técnicas de NLP para analizar descripciones textuales.
    - Cálculo de similitud del coseno entre películas basado en género, actores y descripciones.
 
 3. **API RESTful**:
@@ -48,9 +46,6 @@ El objetivo de este proyecto es desarrollar un sistema de recomendación eficien
 
 El sistema está desplegado en **Render** para garantizar escalabilidad y disponibilidad. Puedes acceder a la API en el siguiente enlace: [Enlace a la API en Render](https://tuenlace.render.com).
 
-## Validación del Modelo
-
-El rendimiento del modelo se validó utilizando métricas como **precision@k** y **recall@k**, asegurando que las recomendaciones sean relevantes para los usuarios. Estas métricas ayudaron a evaluar la calidad de las recomendaciones y a ajustar el modelo para mejorar su precisión.
 
 ## Contribución
 
@@ -67,12 +62,3 @@ Asegúrate de incluir pruebas unitarias y documentación actualizada.
 ## Licencia
 
 Este proyecto está bajo la licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
-
-## Contacto
-
-Si tienes preguntas o sugerencias, no dudes en contactarme:
-
-- **Nombre**: Tu Nombre
-- **Email**: tu-email@example.com
-- **GitHub**: [tu-usuario](https://github.com/tu-usuario)
-- **LinkedIn**: [Tu Perfil](https://linkedin.com/in/tu-perfil) <!-- Opcional -->

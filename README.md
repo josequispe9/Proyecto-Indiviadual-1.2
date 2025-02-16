@@ -44,7 +44,7 @@ El objetivo de este proyecto es desarrollar un sistema de recomendación eficien
 
 ## Despliegue
 
-El sistema está desplegado en **Render** para garantizar escalabilidad y disponibilidad. Puedes acceder a la API en el siguiente enlace: [Enlace a la API en Render](https://tuenlace.render.com).
+El sistema está desplegado en **Render** para garantizar escalabilidad y disponibilidad.
 
 
 ## Contribución

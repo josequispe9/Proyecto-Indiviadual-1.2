@@ -1,62 +1,78 @@
+# Sistema de Recomendación de Películas basado en Similitud del Coseno
 
-## Descripción
-Este proyecto tiene como objetivo analizar datos de películas para crear un sistema de recomendación de películas. Utilizando técnicas de ciencia de datos, el sistema sugiere opciones personalizadas para ayudar a los usuarios a descubrir nuevas películas basadas en sus preferencias.
+![Licencia](https://img.shields.io/badge/licencia-MIT-blue.svg) <!-- Cambia la licencia si es necesario -->
 
-## Tabla de Contenido
-- [Descripción](#descripción)
-- [Instalación y Requisitos](#instalación-y-requisitos)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Uso y Ejecución](#uso-y-ejecución)
-- [Metodología](#metodología)
-- [Resultados y Conclusiones](#resultados-y-conclusiones)
-- [Contribución y Colaboración](#contribución-y-colaboración)
+Este proyecto es un sistema de recomendación de películas que utiliza técnicas de **similitud del coseno** y **procesamiento de lenguaje natural (NLP)** para analizar similitudes entre películas basadas en características como género, actores y descripciones textuales. El sistema está diseñado para ser eficiente y escalable, y se implementa como una **API RESTful** utilizando **Flask**, desplegada en **Render** para garantizar disponibilidad y escalabilidad.
+
+## Tabla de Contenidos
+
+- [Objetivo](#objetivo)
+- [Tecnologías Utilizadas](#tecnologías-utilizadas)
+- [Proceso de Desarrollo](#proceso-de-desarrollo)
+- [Despliegue](#despliegue)
+- [Validación del Modelo](#validación-del-modelo)
+- [Contribución](#contribución)
 - [Licencia](#licencia)
-- [Autores](#autores)
+- [Contacto](#contacto)
 
-## Instalación y Requisitos
+## Objetivo
 
-### Requisitos:
-- Python 3.7 o superior
-- pandas
-- numpy
-- matplotlib
-- seaborn
-- scikit-learn
-- pyarrow
+El objetivo de este proyecto es desarrollar un sistema de recomendación eficiente basado en análisis de similitud de contenido para plataformas de streaming. El sistema utiliza técnicas de NLP y similitud del coseno para proporcionar recomendaciones personalizadas y relevantes a los usuarios.
 
-## Pasos de instalación:
+## Tecnologías Utilizadas
 
-Clonar el repositorio: git clone https://github.com/josequispe9/Proyecto-Indiviadual-1.2.git
-Crear un entorno virtual: python -m venv venv
-Activar el entorno virtual:
-Windows: venv\Scripts\activate
-macOS/Linux: source venv/bin/activate
-Instalar las dependencias: pip install -r requirements.txt
+- **Python**: Lenguaje principal para el desarrollo del modelo y la API.
+- **Flask**: Framework para crear la API RESTful.
+- **Pandas y NumPy**: Para el procesamiento y limpieza de datos.
+- **Scikit-learn**: Para calcular la similitud del coseno.
+- **NLP**: Procesamiento de lenguaje natural para analizar descripciones textuales.
+- **Render**: Plataforma de despliegue en la nube.
 
-## Estructura del Proyecto
-EDA: Jupyter notebooks con el análsis para los datos de entrenamiento del modelo
-ETL: Jupyter notebooks con la limpieza realizada a los datasets originales
-df_final: Dataset obtenido a partir del ETL
-main: Código fuente con las funciones y la API
-merge: Jupyter notebooks con la union de los datasets df_final y credits
-peliculas: Dataset obtenido a partir del merge
-peliculas_para_el_modelo2: Dataset obtenido a partir del EDA
-README.md: Documentación.
+## Proceso de Desarrollo
 
+1. **Preprocesamiento de Datos**:
+   - Limpieza y normalización de datos (eliminación de valores nulos, duplicados, etc.).
+   - Normalización de texto para mejorar la calidad del entrenamiento del modelo.
 
-## Uso y Ejecución
-Ejecutar ETL.ipynb para análisis y limpieza del dataset de peliculas y obtener 'df_final.parquet'
-Ejecutar merge.ipynb para unir los dataset 'df_final.parquet' y 'credits' obteniendo el dataset 'peliculas'
-Ejecutar EDA.ipynb para realizar la exploracion y reducir el tamaño del dataset que usara el modelo
+2. **Modelo de Recomendación**:
+   - Uso de técnicas de NLP para analizar descripciones textuales.
+   - Cálculo de similitud del coseno entre películas basado en género, actores y descripciones.
 
+3. **API RESTful**:
+   - Desarrollo de una API con Flask para permitir consultas en tiempo real.
 
-Metodología
-Se aplicaron modelos de similitud del coseno.
+4. **Despliegue**:
+   - Implementación del sistema en Render para garantizar escalabilidad y disponibilidad.
 
-Resultados y Conclusiones
-El sistema de recomendación sugiere películas de acuerdo a las preferencias del usuario, mejorando la experiencia de descubrimiento de contenido.
-La version gratis en Render trabaja en un entorno con muy poca memoria
+## Despliegue
 
+El sistema está desplegado en **Render** para garantizar escalabilidad y disponibilidad. Puedes acceder a la API en el siguiente enlace: [Enlace a la API en Render](https://tuenlace.render.com).
 
-Autores
-Jose Quispe.
+## Validación del Modelo
+
+El rendimiento del modelo se validó utilizando métricas como **precision@k** y **recall@k**, asegurando que las recomendaciones sean relevantes para los usuarios. Estas métricas ayudaron a evaluar la calidad de las recomendaciones y a ajustar el modelo para mejorar su precisión.
+
+## Contribución
+
+Si deseas contribuir a este proyecto, sigue estos pasos:
+
+1. Haz un fork del proyecto.
+2. Crea una rama para tu nueva funcionalidad (`git checkout -b feature/nueva-funcionalidad`).
+3. Realiza tus cambios y haz commit (`git commit -m 'Añade nueva funcionalidad'`).
+4. Haz push a la rama (`git push origin feature/nueva-funcionalidad`).
+5. Abre un Pull Request.
+
+Asegúrate de incluir pruebas unitarias y documentación actualizada.
+
+## Licencia
+
+Este proyecto está bajo la licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+
+## Contacto
+
+Si tienes preguntas o sugerencias, no dudes en contactarme:
+
+- **Nombre**: Tu Nombre
+- **Email**: tu-email@example.com
+- **GitHub**: [tu-usuario](https://github.com/tu-usuario)
+- **LinkedIn**: [Tu Perfil](https://linkedin.com/in/tu-perfil) <!-- Opcional -->
